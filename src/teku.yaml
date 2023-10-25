@@ -1,0 +1,17 @@
+eth1-endpoint: "https://mainnet.infura.io/v3/819412e57b5943a6a12c0a335fe5f87b"
+
+data-path: "/srv/chain/teku"
+
+logging: "INFO"
+log-color-enabled: true
+log-include-events-enabled: true
+
+p2p-enabled: true
+p2p-discovery-enabled: true
+
+rest-api-port: 5051
+rest-api-enabled: True
+rest-api-interface: "127.0.0.1"
+
+metrics-enabled: True
+metrics-port: 8008

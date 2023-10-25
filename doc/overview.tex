@@ -1,0 +1,221 @@
+\documentclass[twoside,twocolumn]{article}
+\usepackage{graphicx}
+\usepackage[sc]{mathpazo}
+\usepackage[T1]{fontenc}
+\linespread{1.05}
+\usepackage{microtype}
+\usepackage[english]{babel}
+\usepackage[hmarginratio=1:1,top=32mm,columnsep=20pt]{geometry}
+\usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption}
+\usepackage{booktabs}
+\usepackage{lettrine}
+\usepackage{enumitem}
+\setlist[itemize]{noitemsep}
+\usepackage{abstract}
+\renewcommand{\abstractnamefont}{\normalfont\bfseries}
+\renewcommand{\abstracttextfont}{\normalfont\small\itshape}
+\usepackage{titlesec}
+\renewcommand\thesection{\Roman{section}}
+\renewcommand\thesubsection{\roman{subsection}}
+\titleformat{\section}[block]{\large\scshape\centering}{\thesection.}{1em}{}
+\titleformat{\subsection}[block]{\large}{\thesubsection.}{1em}{}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot{}
+\fancyhead[C]{Ethereum 2.0 Client Metrics $\bullet$ \today}
+\fancyfoot[RO,LE]{\thepage}
+\usepackage{titling}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\setlength{\droptitle}{-4\baselineskip}
+\pretitle{\begin{center}\Huge\bfseries}
+\posttitle{\end{center}}
+\title{Ethereum 2.0 Client Metrics 10/2020}
+\author{\textsc{Afri Schoedon, \href{https://github.com/q9f}{@q9f}}}\date{\today}
+
+\begin{document}
+\maketitle
+\section{Introduction}
+\lettrine[nindent=0em,lines=3]{E}thereum 2.0 will be a new blockchain protocol enabling -- amongst others -- horizontal scalability through sharding and transitioning the chain to a proof-of-stake consensus algorithm.\par
+
+\begin{figure}
+   \centering
+   \begin{subfigure}[t]{0.48\textwidth}
+     \centering
+     \includegraphics[page=1,width=0.6\textwidth]{../res/plots.pdf}
+     \caption{Lighthouse is depicted in orange.}
+     \label{img:lh}
+   \end{subfigure}
+   \begin{subfigure}[t]{0.48\textwidth}
+     \centering
+     \includegraphics[page=2,width=0.6\textwidth]{../res/plots.pdf}
+     \caption{Prysm is depicted in purple.}
+     \label{img:pr}
+   \end{subfigure}
+   \begin{subfigure}[t]{0.48\textwidth}
+     \centering
+     \includegraphics[page=3,width=0.6\textwidth]{../res/plots.pdf}
+     \caption{Nimbus is depicted in blue.}
+     \label{img:nb}
+   \end{subfigure}
+   \begin{subfigure}[t]{0.48\textwidth}
+     \centering
+     \includegraphics[page=4,width=0.6\textwidth]{../res/plots.pdf}
+     \caption{Teku is depicted in turquoise.}
+     \label{img:tk}
+   \end{subfigure}
+  \caption{All data collected is displayed in these matrices: time running, slot height, blocks per second, database size, memory usage, and peer count.}
+  \label{fig:cli}
+\end{figure}
+
+\subsection{Motivation}
+None of the features that Ethereum 2.0 will bring are being implemented in established Ethereum 1.x clients such as Geth or Besu. Therefore, a new generation of core clients to power the beacon chain is under development. None of these clients has ever been used in production before.\par
+
+With the launch of the beacon chain supposedly happening in 2020, the third compilation of key metrics of four selected Ethereum 2.0 clients will be conducted, namely Lighthouse, Prysm, Teku, and Nimbus.\par
+
+This work shall allow insights into the performance and stability of the given beacon-chain node implementations.\par
+
+\subsection{Previous Benchmarks}
+In June 2020, a similar, preliminary benchmark has been conducted\footnote{\href{https://github.com/q9f/eth2-bench-2020-06}{github.com/q9f/eth2-bench-2020-06}} gathering first insights into client metrics and getting feedback from the Ethereum 2.0 core-developer community.\par
+
+In July 2020, a similar, more careful benchmark has been conducted\footnote{\href{https://github.com/q9f/eth2-bench-2020-07}{github.com/q9f/eth2-bench-2020-07}}.\par
+
+Before diving into the results, please note the following.
+
+\begin{enumerate}
+\item The four profiled clients are still the same, however, three months of active development have passed since the last benchmark.
+\item The numbers in this report are \textit{not} comparable with numbers in the previous reports. This is mainly due to the use of different hardware for each individual benchmark.
+\item Last but not least, this benchmark was conducted on the Medalla testnet\footnote{\href{https://github.com/goerli/medalla}{github.com/goerli/medalla}}. In contrast to the Witti and Altona testnet used in the previous reports, the Medalla testnet has a different composition of validators and is entirely run by the community.
+\end{enumerate}
+
+\subsection{Commented Data}
+This article seeks to document the gathered metrics of different clients adhering to scientific methodology. It does not, however, intend to replace a peer-reviewed publication. It simply represents a version of the data commented by the author.\par
+
+The raw data is available on Github\footnote{\href{https://github.com/q9f/eth2-bench-2020-10}{github.com/q9f/eth2-bench-2020-10}} for further analysis.
+
+\section{Clients}
+\label{sec:cli}
+
+Four clients are used for comparing key-performance metrics.\par
+
+\textsc{Lighthouse} is an Ethereum 2.0 client developed by Sigma Prime\footnote{\href{https://github.com/sigp/lighthouse}{github.com/sigp/lighthouse}}. It is implemented in the Rust programming language. Data referring to the Lighthouse client is depicted in orange throughout this document (figure \ref{img:lh}).\par
+
+\textsc{Prysm} is a beacon-chain implementation written in Go\footnote{\href{https://github.com/prysmaticlabs/prysm}{github.com/prysmaticlabs/prysm}}. It is being maintained by the Prysmatic Labs team. Data referring to the Prysm client is depicted in purple throughout this document (figure \ref{img:pr}).\par
+
+\textsc{Nimbus} is a beacon-node implementation written in Nim built by the Status team\footnote{\href{https://github.com/status-im/nim-beacon-chain}{github.com/status-im/nim-beacon-chain}}. Data referring to the Nim-Beacon-Chain client is depicted in blue throughout this document (figure \ref{img:nb}).\par
+
+\textsc{Teku} is an enterprise-grade Ethereum 2.0 client built by the PegaSys Engineering team\footnote{\href{https://github.com/PegaSysEng/teku}{github.com/PegaSysEng/teku}}. It is implemented in Java and data referring to the Teku client is depicted in turquoise throughout this document (figure \ref{img:tk}).\par
+
+Other clients implementing the Ethereum 2.0 protocol exist, namely ChainSafe Systems' \textsc{Lodestar}\footnote{\href{https://github.com/ChainSafe/lodestar}{github.com/ChainSafe/lodestar}}, Nethermind's \textsc{Cortex}\footnote{\href{https://github.com/NethermindEth/cortex}{github.com/NethermindEth/cortex}}, and the Ethereum Foundation's \textsc{Trinity}\footnote{\href{https://github.com/ethereum/trinity}{github.com/ethereum/trinity}}. Due to the different progress of implementing the protocol specification and core components, these clients were not considered for comparison.\par
+
+\section{Metadata}
+The data is gathered on the Medalla testnet. Medalla is the fourth multi-client testnet launched with the four in section \ref{sec:cli} introduced clients as genesis validators.\par
+
+At the time of collecting the metrics, the Medalla testnet is based on \texttt{v0.12.3} of the Ethereum 2.0 beacon-chain specification. It contains approximately 410,000 slots and is run by 65,136 validators.\par
+
+\subsection{Host Systems}
+Four identical host systems have been installed for the sole purpose of the performance inspection. The host systems are dedicated bare-metal servers with an Ubuntu 20.04 LTS operating system kernel version \texttt{5.4.0-48-generic}.\par
+
+The host machines are powered by an Intel Xeon Silver 4114 CPU with 20 cores. The available memory is 128 GB and the NVMe disks allow for 1024 GB capacity.\par
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[page=5,width=0.45\textwidth]{../res/plots.pdf}
+	\caption{Synchronization progress over time.}
+	\label{img:sync:prog}
+\end{figure}
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[page=9,width=0.45\textwidth]{../res/plots.pdf}
+	\caption{Synchronization speed over time.}
+	\label{img:sync:sped}
+\end{figure}
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[page=6,width=0.45\textwidth]{../res/plots.pdf}
+	\caption{Database size over time.}
+	\label{img:db}
+\end{figure}
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[page=7,width=0.45\textwidth]{../res/plots.pdf}
+	\caption{Resident memory usage over time.}
+	\label{img:mem}
+\end{figure}
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[page=8,width=0.45\textwidth]{../res/plots.pdf}
+	\caption{Client's peer count over time.}
+	\label{img:per}
+\end{figure}
+
+\subsection{Client Versions}
+All clients were compiled on September 30th, 2020, either from the latest available release tag or latest commit on the main branch targeting the version \texttt{v0.12.3} of the Ethereum 2.0 specification.
+
+\begin{itemize}
+\item \textbf{Lighthouse}: version \texttt{lighthouse/0.2.13}, compiled from \texttt{v0.2.13} tag at commit \texttt{c0e76d2c} from September 29th, 2020, with Rust version \texttt{1.46.0}-stable through Cargo.
+\item \textbf{Prysm}: compiled from \texttt{v1.0.0-alpha.27} tag at commit \texttt{eb3e4944} from September 29th, 2020, with Go version \texttt{1.13.8} through Bazel.
+\item \textbf{Nimbus}: version \texttt{beacon\_node v0.5.0}, compiled from \texttt{master} branch at commit \texttt{78ceeed8} from September 29th, 2020, with Nim version \texttt{1.2.6} through Make.
+\item \textbf{Teku}: version \texttt{teku/v0.12.8}, compiled from \texttt{0.12.8} tag at commit \texttt{60bc0316} from September 27th, 2020, with Java version \texttt{14.0.1} through Gradle.
+\end{itemize}
+
+All clients contain a built-in Medalla configuration and were provided with a sufficient number of bootstrap nodes to ensure good connectivity and eliminate potential networking bottlenecks (compare section \ref{sec:perf} point \ref{sec:perf:p2p}).\par
+
+\section{Performance}
+\label{sec:perf}
+This document only inspects the performance metrics of beacon-chain node implementations. Other features such as running validator clients, bootstrap nodes, or other relevant tooling are disregarded for simplicity.
+
+\subsection{Synchronization Metrics}
+Figure \ref{img:sync:prog} displays the progress of synchronizing the four aforementioned clients. Notably, the Lighthouse client manages to fully synchronize all blocks and verify all signatures in a little less than 4.5 hours with the Prysm client being right behind finishing the same task in just 6 hours and 41 minutes. Nimbus completes the same task in 12 hours and 54 minutes, whereas Teku requires 22 hours and 36 minutes to fully sync and verify the Medalla beacon chain.\par
+
+Also, figure \ref{img:sync:sped} displays the same data but computing the synchronization speed in slots per second by taking the time required to fully catch up with the beacon-chain head. The plotted data points display a moving average over 60 seconds, the plotted line shows a moving average over 10 minutes. Lighthouse and Prysm lead the chart at an average of approximately 26 and 17 slots per second respectively on the dedicated hardware.\par
+
+The data at glance.
+\begin{itemize}
+\item \textbf{Lighthouse} synchronizes 411,181 slots in 15,855 seconds at an overall average speed of 25.934 slots per second.
+\item \textbf{Prysm} catches up with 411,862 slots in 24,059 seconds at 17.119 slots per second.
+\item \textbf{Nimbus} synchronizes 413,727 slots in 46,412 seconds at an average speed of 8.9142 slots per second.
+\item \textbf{Teku} catches up with 416,639 slots in 81,375 seconds at 5.1200 slots per second.
+\end{itemize}
+
+\subsection{Database Metrics}
+Figure \ref{img:db} displays the database size in Bytes plotted over time of running the nodes. The patterns are left uncommented for the anyone to analyze.\par
+
+Teku database size is missing due to a typo on the data path (author's fault). Sorry.
+
+\subsection{Memory Metrics}
+Figure \ref{img:mem} displays resident set size reported by the four clients. Again, the patterns are left uncommented.\par
+
+Teku reports a little less than 20 GiB. The actual Java heap memory used by Teku on Medalla can be assumed much lower. The off-heap memory that Java allocates is outside of the team's easy control. The JVM is being greedy about available memory, however, it is still possible to run Teku nodes on machines with very small available memory, e.g., 2GB.\par
+
+\subsection{Networking Metrics}
+\label{sec:perf:p2p}
+Figure \ref{img:per} displays the peer count of every client during operation. There is not much to be commented on. This metric simply serves as a sanity check to rule out networking issues that could impact any of the other metrics.\par
+
+\section{Conclusion}
+The plots allow for an overview of key performance and stability metrics of the four tested clients.\par
+
+Notably, both Lighthouse and Prysm appear to be highly optimized in their performance and mature in the implementation of the beacon-chain specification.\par
+
+The relatively new Nimbus client already shows good performance but the metrics allow the conclusion that there is still room for optimization.\par
+
+\vspace{\fill}
+
+\section*{Note}
+The author is not affiliated with any of the teams implementing an Ethereum 2.0 client. The author is independently funded through the Ethereum Foundation's Ecosystem Support Program\footnote{\href{https://esp.ethereum.foundation}{esp.ethereum.foundation}} and the Goerli Testnet Initiative\footnote{\href{https://goerli.net}{goerli.net}}.\par
+
+The author is not speaking on behalf of any organization.\par
+
+A warm note of thanks goes out to everyone who reviewed the initial June and July reports and provided valuable feedback allowing for a more accurate data gathering in this subsequent report.\par
+
+And finally, a big thanks to the client teams patiently answering questions and sharing insights about the protocol implementations.
+
+\texttt{:)}
+\end{document}
